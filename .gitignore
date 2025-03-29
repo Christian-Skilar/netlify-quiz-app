@@ -5,7 +5,10 @@
 /.pnp
 .pnp.js
 
-echo ".env" >> .gitignore
+# Environment variables
+.env
+.env.*
+!.env.example
 
 # testing
 /coverage
