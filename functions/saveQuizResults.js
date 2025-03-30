@@ -62,7 +62,7 @@ exports.handler = async (event) => {
 
     const correctAnswers = {
       1: "Ignore and check directly",
-      2: "Scan if it looks professionall",
+      2: "Verify with the colleague in person",
       3: "A scam attempting to create urgency",
       4: "Log in directly through your banking app"
     };

@@ -22,7 +22,7 @@ function Quiz() {
       id: 2,
       question: "A colleague message you to scan a QR code for required document.",
       options: ["QR codes are always safe", "Verify with the colleague in person", "Scan if it looks professionall", "Check if your phone has virus protection first"],
-      correctAnswer: "Scan if it looks professionall",
+      correctAnswer: "Verify with the colleague in person",
       image: qrcode
     },
     {
