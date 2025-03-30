@@ -46,10 +46,20 @@ function Quiz() {
   const [quizCompleted, setQuizCompleted] = useState(false);
 
   const handleAnswerSelect = (questionId, answer) => {
-    setSelectedAnswers({
+    const newAnswers = {
       ...selectedAnswers,
       [questionId]: answer
-    });
+    };
+    setSelectedAnswers(newAnswers);
+    
+    // Auto-advance to next question or submit if last question
+    setTimeout(() => {
+      if (currentQuestionIndex < questions.length - 1) {
+        setCurrentQuestionIndex(currentQuestionIndex + 1);
+      } else {
+        handleSubmit(newAnswers);
+      }
+    }, 300); // Small delay for visual feedback
   };
 
   const calculateScore = () => {
@@ -62,11 +72,11 @@ function Quiz() {
     return correct;
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (answers = selectedAnswers) => {
     setQuizCompleted(true);
     
     const quizData = {
-      answers: selectedAnswers,
+      answers: answers,
       score: calculateScore(),
       timestamp: new Date().toISOString()
     };
@@ -171,25 +181,18 @@ function Quiz() {
         ))}
       </div>
       
-      <div className="navigation-buttons">
-        {currentQuestionIndex < questions.length - 1 ? (
-          <button 
-            className="nav-button next-button" 
-            onClick={() => setCurrentQuestionIndex(currentQuestionIndex + 1)}
-            disabled={!selectedAnswers[currentQuestion.id]}
-          >
-            Next Question
-          </button>
-        ) : (
+      {/* Submit button only shown on last question */}
+      {currentQuestionIndex === questions.length - 1 && (
+        <div className="navigation-buttons">
           <button 
             className="nav-button submit-button" 
-            onClick={handleSubmit}
+            onClick={() => handleSubmit()}
             disabled={!selectedAnswers[currentQuestion.id]}
           >
             Submit Quiz
           </button>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }

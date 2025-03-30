@@ -1,7 +1,8 @@
+// functions/saveQuizResults.js
 const { GoogleSpreadsheet } = require('google-spreadsheet');
 require('dotenv').config();
 
-exports.handler = async (event, context) => {
+exports.handler = async (event) => {
   if (event.httpMethod !== 'POST') {
     return { statusCode: 405, body: 'Method Not Allowed' };
   }
@@ -10,82 +11,71 @@ exports.handler = async (event, context) => {
     const data = JSON.parse(event.body);
     const doc = new GoogleSpreadsheet(process.env.GOOGLE_SHEET_ID);
 
-    // Authenticate with service account credentials
+    // Authenticate
     await doc.useServiceAccountAuth({
       client_email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
-      private_key: process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, '\n'),
+      private_key: process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, '\n')
     });
 
     await doc.loadInfo();
     const sheet = doc.sheetsByIndex[0];
 
-    // Format answers with color coding
-    const formattedAnswers = {};
-    for (const [q, answer] of Object.entries(data.answers)) {
-      const question = questions.find(q => q.id === parseInt(q));
-      const isCorrect = answer === question.correctAnswer;
-      formattedAnswers[`Q${q}`] = {
-        value: answer,
-        backgroundColor: isCorrect ? { red: 0.85, green: 0.97, blue: 0.80 } : { red: 0.96, green: 0.80, blue: 0.82 },
-      };
-    }
+    // Prepare row data with correct column mapping
+    const rowData = {
+      Timestamp: data.timestamp || new Date().toISOString(), // Column A
+      Q1: data.answers[1] || 'Not answered',                 // Column B
+      Q2: data.answers[2] || 'Not answered',                 // Column C
+      Q3: data.answers[3] || 'Not answered',                 // Column D
+      Q4: data.answers[4] || 'Not answered',                 // Column E
+      Score: data.score                                      // Column F
+    };
 
-    // Add row with formatted data
-    await sheet.addRow({
-      Timestamp: new Date().toISOString(),
-      ...formattedAnswers,
-      Score: data.score,
-    });
+    // Add row
+    const addedRow = await sheet.addRow(rowData);
+    const rowNumber = addedRow.rowNumber;
 
     // Apply color formatting
-    await sheet.loadCells('A1:Z1000');
-    const rows = await sheet.getRows();
-    const lastRow = rows.length;
-    
-    questions.forEach((q, i) => {
-      const cell = sheet.getCellByA1(`${String.fromCharCode(67 + i)}${lastRow}`);
-      const answer = data.answers[q.id];
-      if (answer === q.correctAnswer) {
-        cell.backgroundColor = { green: 0.7, red: 0.2, blue: 0.2 }; // Light green
-      } else {
-        cell.backgroundColor = { red: 0.9, green: 0.6, blue: 0.6 }; // Light red
-      }
+    await sheet.loadCells({
+      startRowIndex: rowNumber - 1,
+      endRowIndex: rowNumber,
+      startColumnIndex: 1, // Column B (Q1)
+      endColumnIndex: 5    // Column E (Q4)
     });
+
+    // Color cells B-E based on correctness
+    for (let q = 1; q <= 4; q++) {
+      const cell = sheet.getCell(rowNumber - 1, q); // Rows are 0-indexed
+      cell.backgroundColor = data.answers[q] === getCorrectAnswer(q)
+        ? { red: 0.2, green: 0.7, blue: 0.2 }  // Green for correct
+        : { red: 0.9, green: 0.2, blue: 0.2 }; // Red for wrong
+    }
 
     await sheet.saveUpdatedCells();
 
     return {
       statusCode: 200,
-      body: JSON.stringify({ message: 'Results saved successfully' }),
+      body: JSON.stringify({ message: 'Results saved to columns A-F with color coding' })
     };
+
   } catch (error) {
+    console.error('Detailed error:', error);
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: error.message }),
+      body: JSON.stringify({ 
+        error: error.message,
+        stack: error.stack 
+      })
     };
   }
 };
 
-// Add your questions here (same as in React)
-const questions = [
-  {
-    id: 1,
-    question: "What do you do when you get this message?",
-    correctAnswer: "Ignore"
-  },
-  {
-    id: 2,
-    question: "Are QR codes harmfull?",
-    correctAnswer: "Can be"
-  },
-  {
-    id: 3,
-    question: "New iPhone 90% OFF!! Take action before its gone! What do you do?",
-    correctAnswer: "To good to be true"
-  },
-  {
-    id: 4,
-    question: "You get email that appears to be from your bank, asking you to verify your account due to suspicious activity",
-    correctAnswer: "Forward mail to the bank"
-  },
-];
+// Helper function to get correct answers
+function getCorrectAnswer(questionId) {
+  const questions = {
+    1: "Ignore",
+    2: "Can be",
+    3: "To good to be true",
+    4: "Forward mail to the bank"
+  };
+  return questions[questionId];
+}
