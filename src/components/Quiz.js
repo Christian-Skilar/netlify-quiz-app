@@ -13,7 +13,7 @@ function Quiz() {
   const questions = [
     {
       id: 1,
-      question: "What would you do if you were expecting a package and you get this message?",
+      question: "You are expecting a package and you get this message, what do you do?",
       options: ["Click to avoid missing delivery", "Ignore and check directly", "Forward to friend for their opinion", "Reply STOP to unsubscribe"],
       correctAnswer: "Ignore and check directly",
       image: scam
