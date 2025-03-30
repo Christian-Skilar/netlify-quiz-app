@@ -13,30 +13,30 @@ function Quiz() {
   const questions = [
     {
       id: 1,
-      question: "What do you do when you get this message?",
-      options: ["Open", "Ignore", "Check Link", "Send sms STOP"],
-      correctAnswer: "Ignore",
+      question: "What would you do if you were expecting a package and you get this message?",
+      options: ["Click to avoid missing delivery", "Ignore and check directly", "Forward to friend for their opinion", "Reply STOP to unsubscribe"],
+      correctAnswer: "Ignore and check directly",
       image: scam
     },
     {
       id: 2,
-      question: "Are QR codes harmful?",
-      options: ["Don't think so", "Never", "Can be", "Easy to see if fake"],
-      correctAnswer: "Can be",
+      question: "A colleague message you to scan a QR code for required document.",
+      options: ["QR codes are always safe", "Verify with the colleague in person", "Scan if it looks professionall", "Check if your phone has virus protection first"],
+      correctAnswer: "Scan if it looks professionall",
       image: qrcode
     },
     {
       id: 3,
-      question: "New iPhone 90% OFF!! Take action before it's gone! What do you do?",
-      options: ["Be quick", "Too good to be true", "See if any left", "JACKPOT"],
-      correctAnswer: "Too good to be true",
+      question: "You see an ad offering the latest iPhone for 90% off with only 2 left in stock! What's the most likely explanation?",
+      options: ["A limited-time clearance sale", "A pricing error, take advantage", "A scam attempting to create urgency", "A special loyalty reward program"],
+      correctAnswer: "A scam attempting to create urgency",
       image: sale
     },
     {
       id: 4,
-      question: "You get email that appears to be from your bank, asking to verify your account due to suspicious activity",
-      options: ["Click the link", "Forward mail to the bank", "Reply", "Call the number"],
-      correctAnswer: "Forward mail to the bank",
+      question: "An email from your bank requests immediate verification of your account details due to suspicious activity. What's the most secure response?",
+      options: ["Click Verify Account in the email", "Call the number provided in the email", "Log in directly through your banking app", "Forward the email to the bank"],
+      correctAnswer: "Log in directly through your banking app",
       image: mail
     }
   ];
@@ -102,8 +102,8 @@ function Quiz() {
       }`}>
         <h2>{
           wrong === 0 ? "Perfect! You got all answers right!" :
-          wrong === 1 ? `Good job! You got ${correct} out of ${questions.length} right!` :
-          "Thank you for completing the quiz!"
+          wrong === 1 ? `You got ${correct} out of ${questions.length} right!` :
+          "Hold up!"
         }</h2>
         <div className="result-image">
           <img src={
@@ -111,9 +111,9 @@ function Quiz() {
             wrong === 1 ? warning : help
           } alt="Result" />
           <p>{
-            wrong === 0 ? "You are as aware as can be - Excellent job!" :
-            wrong === 1 ? "Almost perfect! Ask our staff for safety tips" :
-            "This was not a good result, ask our staff for guidance"
+            wrong === 0 ? "Safety champion! Your knowledge is impressive. Remember, our safety team is always available if you have questions or want to discuss best practices." :
+            wrong === 1 ? "Great work! You're clearly safety-conscious. For those last few areas to perfect, ask our experts to share some safety tips." :
+            "Safety is a learning journey! Our team would be happy to review these concepts with you and share important safety tips."
           }</p>
         </div>
         <button className="restart-button" onClick={restartQuiz}>

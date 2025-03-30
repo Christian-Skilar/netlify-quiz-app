@@ -61,10 +61,10 @@ exports.handler = async (event) => {
     });
 
     const correctAnswers = {
-      1: "Ignore",
-      2: "Can be",
-      3: "To good to be true",
-      4: "Forward mail to the bank"
+      1: "Ignore and check directly",
+      2: "Scan if it looks professionall",
+      3: "A scam attempting to create urgency",
+      4: "Log in directly through your banking app"
     };
 
     for (let q = 1; q <= 4; q++) {

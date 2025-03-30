@@ -1,193 +1,302 @@
 /* src/components/Quiz.css */
 
 body, html {
-    height: 100%;
-    margin: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: #f5f5f5;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f5f5f5;
+  font-family: Arial, sans-serif;
+}
+
+.quiz-container {
+  max-width: 1200px;
+  width: 90%;
+  padding: 30px;
+  background: white;
+  border-radius: 15px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin: 20px;
+}
+
+.question-text, .question-image {
+  transition: opacity 0.3s ease;
+}
+
+.progress-indicator {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 18px;
+  color: #666;
+}
+
+.question-text {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #333;
+  line-height: 1.4;
+}
+
+.question-image {
+  margin: 20px 0;
+  text-align: center;
+}
+
+.question-image img {
+  max-width: 100%;
+  max-height: 300px;
+  border-radius: 10px;
+  object-fit: cover;
+}
+
+.options-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 15px;
+  margin-bottom: 30px;
+  transition: all 0.3s ease;
+}
+
+.option-button {
+  padding: 15px;
+  background-color: #252525;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  word-break: break-word;
+}
+
+.option-button:hover {
+  background-color: #3a3a3a;
+  transform: translateY(-2px);
+}
+
+.option-button.selected {
+  background-color: #cf4a0c;
+  transform: translateY(0);
+}
+
+.navigation-buttons {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+
+.nav-button {
+  padding: 15px 25px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  min-width: 150px;
+  background-color: #5CB85C;
+  color: white;
+  transition: all 0.2s ease;
+}
+
+.nav-button:hover {
+  background-color: #4CAE4C;
+  transform: translateY(-2px);
+}
+
+.nav-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.completion-screen {
+  text-align: center;
+  padding: 30px;
+  max-width: 800px;
+  width: 90%;
+  background: white;
+  border-radius: 15px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin: auto;
+}
+
+.completion-screen h2 {
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.result-image {
+  margin: 20px 0;
+}
+
+.result-image img {
+  max-width: 100%;
+  max-height: 300px;
+  border-radius: 10px;
+  object-fit: cover;
+}
+
+.result-image p {
+  margin-top: 10px;
+}
+
+.restart-button {
+  padding: 15px 25px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  background-color: #252525;
+  color: white;
+  margin-top: 20px;
+  min-width: 200px;
+  transition: all 0.2s ease;
+}
+
+.restart-button:hover {
+  background-color: #3a3a3a;
+  transform: translateY(-2px);
+}
+
+.perfect-score {
+  background-color: #e8f5e9;
+}
+
+.good-score {
+  background-color: #e3f2fd;
+}
+
+.average-score {
+  background-color: #ffebee;
+}
+
+/* Phone (default) styles */
+@media (max-width: 767px) {
+
+  body, html {
+    align-items: flex-start; /* Better for mobile to start from top */
+    padding-top: 20px;
   }
   
   .quiz-container {
-    max-width: 800px;
-    width: 80%;
-    padding: 30px;
-    font-size: 24px;
-    background: white;
-    border-radius: 15px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    margin: auto;
-  }
-
-  .question-text, .question-image {
-    transition: opacity 0.3s ease;
-  }
-  
-  .progress-indicator {
-    text-align: center;
-    margin-bottom: 20px;
-    font-size: 20px;
-    color: #666;
+    width: calc(100% - 40px); /* Accounts for margin */
+    margin: 20px auto; /* Centering with margin */
+    padding: 15px;
   }
   
   .question-text {
-    text-align: center;
-    margin-bottom: 20px;
-    font-size: 28px;
-    color: #333;
-  }
-  
-  .question-image {
-    margin: 20px 0;
-    text-align: center;
-  }
-  
-  .question-image img {
-    max-width: 100%;
-    max-height: 300px;
-    border-radius: 10px;
-    object-fit: cover;
-  }
-  
-  .options-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 15px;
-    margin-bottom: 40px;
-    transition: all 0.3s ease;
+      font-size: 22px;
   }
   
   .option-button {
-    padding: 20px 15px;
-    background-color: #252525;
-    color: white;
-    border: none;
-    border-radius: 12px;
-    font-size: 20px;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-    min-height: 80px;
+      font-size: 18px;
+      min-height: 60px;
+      padding: 12px;
   }
   
-  .option-button:hover {
-    background-color: #3a3a3a;
+  .progress-indicator {
+      font-size: 16px;
   }
   
-  .option-button.selected {
-    background-color: #cf4a0c;
-  }
-  
-  .navigation-buttons {
-    display: flex;
-    justify-content: flex-end;
-    margin-top: 30px;
-  }
-  
-  .nav-button {
-    padding: 20px 30px;
-    font-size: 20px;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    min-width: 200px;
-    background-color: #5CB85C;
-    color: white;
-  }
-  
-  .nav-button:hover {
-    background-color: #5CB85C;
-  }
-  
-  .nav-button:disabled {
-    background-color: #cccccc;
-    cursor: not-allowed;
+  .nav-button, .restart-button {
+      font-size: 18px;
+      padding: 12px 20px;
+      min-width: 120px;
   }
   
   .completion-screen {
-    text-align: center;
-    padding: 40px;
-    font-size: 26px;
-    max-width: 800px;
-    width: 80%;
-    background: white;
-    border-radius: 15px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    margin: auto;
+      font-size: 20px;
+      padding: 20px;
   }
-  
-  .completion-screen h2 {
-    margin-bottom: 30px;
-    color: #333;
-  }
-  
-  .result-image {
-    margin: 30px 0;
-  }
-  
-  .result-image img {
-    max-width: 100%;
-    max-height: 300px;
-    border-radius: 10px;
-    object-fit: cover;
-  }
-  
-  .result-image p {
-    margin-top: 15px;
-    font-size: 22px;
-  }
-  
-  .restart-button {
-    padding: 20px 30px;
-    font-size: 22px;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    background-color: #252525;
-    color: white;
-    margin-top: 30px;
-    min-width: 250px;
-  }
-  
-  .restart-button:hover {
-    background-color: #3a3a3a;
-  }
-  
-  .perfect-score {
-    background-color: #e8f5e9;
-  }
-  
-  .good-score {
-    background-color: #e3f2fd;
-  }
-  
-  .average-score {
-    background-color: #ffebee;
-  }
-  
-  /* Tablet-specific optimizations */
-  @media (min-width: 768px) {
+}
 
-    .quiz-container {
-      min-width: 768px;
-      width: 90%;
-    }
+/* Tablet styles */
+@media (min-width: 768px) and (max-width: 1023px) {
+    body, html {
+      align-items: center;
+  }
 
-    .options-grid {
+  .quiz-container {
+      width: calc(100% - 40px); /* Accounts for margin */
+      margin: 20px auto; /* Centering with margin */
+      padding: 25px;
+  }
+  
+  .question-text {
+      font-size: 26px;
+  }
+  
+  .options-grid {
       grid-template-columns: 1fr 1fr;
-    }
-    
-    .option-button {
-      min-height: 100px;
-      font-size: 25px;
-    }
-    
-    .question-text {
-      font-size: 32px;
-    }
-    
-    .nav-button, .restart-button {
-      font-size: 22px;
-      padding: 25px 35px;
-    }
   }
+  
+  .option-button {
+      font-size: 20px;
+      min-height: 90px;
+  }
+  
+  .progress-indicator {
+      font-size: 18px;
+  }
+  
+  .nav-button, .restart-button {
+      font-size: 20px;
+      padding: 18px 25px;
+      min-width: 180px;
+  }
+  
+  .completion-screen {
+      font-size: 24px;
+  }
+}
+
+/* Desktop styles */
+@media (min-width: 1024px) {
+    body, html {
+      align-items: center;
+  }
+
+  .quiz-container {
+      width: calc(100% - 40px); /* Accounts for margin */
+      margin: 20px auto; /* Centering with margin */
+      padding: 40px;
+  }
+  
+  .question-text {
+      font-size: 32px;
+      margin-bottom: 30px;
+  }
+  
+  .options-grid {
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+  }
+  
+  .option-button {
+      font-size: 24px;
+      min-height: 120px;
+      padding: 20px;
+  }
+  
+  .progress-indicator {
+      font-size: 20px;
+  }
+  
+  .nav-button, .restart-button {
+      font-size: 22px;
+      padding: 20px 30px;
+      min-width: 200px;
+  }
+  
+  .completion-screen {
+      font-size: 28px;
+      padding: 40px;
+  }
+  
+  .question-image img, .result-image img {
+      max-height: 400px;
+  }
+}
