@@ -1,8 +1,17 @@
 [build]
   command = "npm run build"
   publish = "build"
-  functions = "functions"
+  functions = "functions"  # Points to your functions directory
 
 [functions]
   node_bundler = "esbuild"
-  timeout = 10
+
+  [functions.timeout]
+  default = 10  # Seconds (max for free tier)
+  max = 10
+
+# Optional: For Single Page Apps (React)
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
