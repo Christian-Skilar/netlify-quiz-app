@@ -20,22 +20,22 @@ function Quiz() {
     },
     {
       id: 2,
-      question: "Are QR codes harmfull?",
+      question: "Are QR codes harmful?",
       options: ["Don't think so", "Never", "Can be", "Easy to see if fake"],
       correctAnswer: "Can be",
       image: qrcode
     },
     {
       id: 3,
-      question: "New iPhone 90% OFF!! Take action before its gone! What do you do?",
-      options: ["Be quick", "To good to be true", "See if its still some left", "JACKPOT"],
-      correctAnswer: "To good to be true",
+      question: "New iPhone 90% OFF!! Take action before it's gone! What do you do?",
+      options: ["Be quick", "Too good to be true", "See if any left", "JACKPOT"],
+      correctAnswer: "Too good to be true",
       image: sale
     },
     {
       id: 4,
-      question: "You get email that appears to be from your bank, asking you to verify your account due to suspicious activity",
-      options: ["Click the link", "Forward mail to the bank", "Reply", "Call the provided number"],
+      question: "You get email that appears to be from your bank, asking to verify your account due to suspicious activity",
+      options: ["Click the link", "Forward mail to the bank", "Reply", "Call the number"],
       correctAnswer: "Forward mail to the bank",
       image: mail
     }
@@ -52,48 +52,36 @@ function Quiz() {
     };
     setSelectedAnswers(newAnswers);
     
-    // Auto-advance to next question or submit if last question
+    // Auto-advance or submit
     setTimeout(() => {
       if (currentQuestionIndex < questions.length - 1) {
         setCurrentQuestionIndex(currentQuestionIndex + 1);
       } else {
         handleSubmit(newAnswers);
       }
-    }, 300); // Small delay for visual feedback
+    }, 300);
   };
 
   const calculateScore = () => {
-    let correct = 0;
-    questions.forEach(question => {
-      if (selectedAnswers[question.id] === question.correctAnswer) {
-        correct++;
-      }
-    });
-    return correct;
+    return questions.reduce((correct, question) => (
+      selectedAnswers[question.id] === question.correctAnswer ? correct + 1 : correct
+    ), 0);
   };
 
   const handleSubmit = async (answers = selectedAnswers) => {
     setQuizCompleted(true);
-    
-    const quizData = {
-      answers: answers,
-      score: calculateScore(),
-      timestamp: new Date().toISOString()
-    };
-
     try {
-      const response = await fetch('/.netlify/functions/saveQuizResults', {
+      await fetch('/.netlify/functions/saveQuizResults', {
         method: 'POST',
-        body: JSON.stringify(quizData),
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        body: JSON.stringify({
+          answers,
+          score: calculateScore(),
+          timestamp: new Date().toISOString()
+        }),
+        headers: { 'Content-Type': 'application/json' }
       });
-      
-      if (!response.ok) throw new Error('Failed to save results');
-      console.log('Results saved successfully');
     } catch (error) {
-      console.error('Error saving results:', error);
+      console.error('Submission error:', error);
     }
   };
 
@@ -104,54 +92,38 @@ function Quiz() {
   };
 
   const renderCompletionScreen = () => {
-    const correctAnswers = calculateScore();
-    const wrongAnswers = questions.length - correctAnswers;
+    const correct = calculateScore();
+    const wrong = questions.length - correct;
 
-    if (wrongAnswers === 0) {
-      return (
-        <div className="completion-screen perfect-score">
-          <h2>Perfect! You got all answers right!</h2>
-          <div className="result-image">
-            <img src={win} alt="Perfect score" />
-            <p>You are as aware as can be - Excellent job!</p>
-          </div>
-          <button className="restart-button" onClick={restartQuiz}>
-            Take the Quiz Again
-          </button>
+    return (
+      <div className={`completion-screen ${
+        wrong === 0 ? 'perfect-score' :
+        wrong === 1 ? 'good-score' : 'average-score'
+      }`}>
+        <h2>{
+          wrong === 0 ? "Perfect! You got all answers right!" :
+          wrong === 1 ? `Good job! You got ${correct} out of ${questions.length} right!` :
+          "Thank you for completing the quiz!"
+        }</h2>
+        <div className="result-image">
+          <img src={
+            wrong === 0 ? win :
+            wrong === 1 ? warning : help
+          } alt="Result" />
+          <p>{
+            wrong === 0 ? "You are as aware as can be - Excellent job!" :
+            wrong === 1 ? "Almost perfect! Ask our staff for safety tips" :
+            "This was not a good result, ask our staff for guidance"
+          }</p>
         </div>
-      );
-    } else if (wrongAnswers === 1) {
-      return (
-        <div className="completion-screen good-score">
-          <h2>Good job! You got {correctAnswers} out of {questions.length} right!</h2>
-          <div className="result-image">
-            <img src={warning} alt="Good score" />
-            <p>Almost perfect! Ask one of our staff how to be safer online</p>
-          </div>
-          <button className="restart-button" onClick={restartQuiz}>
-            Take the Quiz Again
-          </button>
-        </div>
-      );
-    } else {
-      return (
-        <div className="completion-screen average-score">
-          <h2>Thank you for completing the quiz!</h2>
-          <div className="result-image">
-            <img src={help} alt="Average score" />
-            <p>This was not a good result, You should be more aware - Ask one of our staff how to be safer online</p>
-          </div>
-          <button className="restart-button" onClick={restartQuiz}>
-            Take the Quiz Again
-          </button>
-        </div>
-      );
-    }
+        <button className="restart-button" onClick={restartQuiz}>
+          Take the Quiz Again
+        </button>
+      </div>
+    );
   };
 
-  if (quizCompleted) {
-    return renderCompletionScreen();
-  }
+  if (quizCompleted) return renderCompletionScreen();
 
   const currentQuestion = questions[currentQuestionIndex];
 
@@ -180,19 +152,6 @@ function Quiz() {
           </button>
         ))}
       </div>
-      
-      {/* Submit button only shown on last question */}
-      {currentQuestionIndex === questions.length - 1 && (
-        <div className="navigation-buttons">
-          <button 
-            className="nav-button submit-button" 
-            onClick={() => handleSubmit()}
-            disabled={!selectedAnswers[currentQuestion.id]}
-          >
-            Submit Quiz
-          </button>
-        </div>
-      )}
     </div>
   );
 }

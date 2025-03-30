@@ -2,16 +2,22 @@
 const { GoogleSpreadsheet } = require('google-spreadsheet');
 const { JWT } = require('google-auth-library');
 
-// Helper function to format timestamp
-function formatTimestamp(isoString) {
-  const date = new Date(isoString);
-  const day = String(date.getDate()).padStart(2, '0');
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const year = date.getFullYear();
-  const hours = String(date.getHours()).padStart(2, '0');
-  const minutes = String(date.getMinutes()).padStart(2, '0');
+function formatNorwegianTimestamp() {
+  const now = new Date();
+  const options = {
+    timeZone: 'Europe/Oslo',
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false
+  };
   
-  return `${day}.${month}.${year} - ${hours}:${minutes}`;
+  return new Intl.DateTimeFormat('no-NO', options)
+    .format(now)
+    .replace(/,/g, '')
+    .replace(/\s+/g, ' ');
 }
 
 exports.handler = async (event) => {
@@ -34,12 +40,9 @@ exports.handler = async (event) => {
     await doc.loadInfo();
     const sheet = doc.sheetsByIndex[0];
 
-    // Format timestamp (DD.MM.YYYY - HH:mm)
-    const formattedTimestamp = formatTimestamp(data.timestamp || new Date().toISOString());
-
-    // Prepare row data
+    // Prepare row data with Norwegian timestamp
     const rowData = {
-      'Timestamp': formattedTimestamp,  // Now in your preferred format
+      'Timestamp': formatNorwegianTimestamp(),
       'Q1': data.answers[1] || 'Not answered',
       'Q2': data.answers[2] || 'Not answered',
       'Q3': data.answers[3] || 'Not answered',
@@ -49,7 +52,7 @@ exports.handler = async (event) => {
 
     const addedRow = await sheet.addRow(rowData);
 
-    // Apply color formatting (B-E columns)
+    // Apply color formatting
     await sheet.loadCells({
       startRowIndex: addedRow.rowNumber - 1,
       endRowIndex: addedRow.rowNumber,
@@ -77,7 +80,7 @@ exports.handler = async (event) => {
       statusCode: 200,
       body: JSON.stringify({ 
         message: 'Results saved successfully',
-        timestamp: formattedTimestamp  // Return formatted timestamp in response
+        norwegianTime: formatNorwegianTimestamp()
       })
     };
 
